@@ -1,0 +1,44 @@
+project_name/
+│
+├── backend/
+│   ├── node_modules/
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   └── otherControllers.js
+│   ├── models/
+│   │   ├── userModel.js
+│   │   └── otherModels.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   └── otherRoutes.js
+│   ├── utils/
+│   │   ├── validation.js
+│   │   └── otherUtils.js
+│   ├── config.js
+│   ├── server.js
+│   └── package.json
+│
+└── frontend/
+    ├── android/
+    ├── ios/
+    ├── lib/
+    │   ├── screens/
+    │   │   ├── home_screen.dart
+    │   │   ├── auth_screen.dart
+    │   │   └── other_screens.dart
+    │   ├── widgets/
+    │   │   ├── button_widget.dart
+    │   │   ├── input_widget.dart
+    │   │   └── other_widgets.dart
+    │   ├── models/
+    │   │   ├── user.dart
+    │   │   └── other_models.dart
+    │   ├── services/
+    │   │   ├── api_service.dart
+    │   │   └── other_services.dart
+    │   ├── utils/
+    │   │   ├── constants.dart
+    │   │   └── other_utils.dart
+    │   ├── main.dart
+    │   └── pubspec.yaml
+    └── web/
