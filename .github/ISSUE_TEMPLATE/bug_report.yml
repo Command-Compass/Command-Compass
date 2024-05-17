@@ -12,14 +12,12 @@ body:
       label: Summary
       description: "A brief summary of the bug."
       placeholder: "Describe the bug here"
-      required: true
   - type: textarea
     id: repro
     attributes:
       label: Reproduction Steps
       description: "How do you trigger this bug? Please walk us through it step by step."
       placeholder: "Describe the steps to reproduce the bug"
-      required: true
   - type: markdown
     attributes:
       value: "## Additional Information"
