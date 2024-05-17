@@ -12,7 +12,6 @@ body:
       label: Summary
       description: "A brief summary of the task."
       placeholder: "Describe the task here"
-      required: true
   - type: textarea
     id: details
     attributes:
