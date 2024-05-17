@@ -1,0 +1,37 @@
+name: Bug Report
+description: Use this template to report bugs.
+
+title: "[Bug] - "
+body:
+  - type: markdown
+    attributes:
+      value: "## Bug Report"
+  - type: input
+    id: bug_summary
+    attributes:
+      label: Summary
+      description: "A brief summary of the bug."
+      placeholder: "Describe the bug here"
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction Steps
+      description: "How do you trigger this bug? Please walk us through it step by step."
+      placeholder: "Describe the steps to reproduce the bug"
+      required: true
+  - type: markdown
+    attributes:
+      value: "## Additional Information"
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: "Which browser/OS/version are you using?"
+      placeholder: "Provide environment details"
+  - type: markdown
+    attributes:
+      value: "## Screenshots (if applicable)"
+  - type: markdown
+    attributes:
+      value: "Attach any relevant screenshots here."
