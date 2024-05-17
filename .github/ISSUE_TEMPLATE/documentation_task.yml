@@ -1,0 +1,20 @@
+name: Documentation Task Issue
+description: Use this template to create documentation task issues.
+
+title: "[Docs] - "
+body:
+  - type: markdown
+    attributes:
+      value: "## Documentation Task Issue"
+  - type: input
+    id: task_summary
+    attributes:
+      label: Summary
+      description: "A brief summary of the documentation task."
+      placeholder: "Describe the documentation task here"
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: "Provide additional details about the documentation task."
+      placeholder: "Describe the task in detail"
