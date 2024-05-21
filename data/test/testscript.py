@@ -42,23 +42,24 @@ for file_name in tqdm(input_files, desc="Processing files"):
         # Read text from the file
         text = read_text_from_file(input_file_path)
 
-        # Print the input text (optional)
-        print(f"Input Text from {file_name}:\n", text)
-
         # Invoke LangChain model with the text twice for two different responses
         response1 = chain.invoke({"Prompt": "Explain in detail", "text": text})
         response2 = chain.invoke(
             {"Prompt": "Give examples for every argument", "text": text}
         )
 
-        # Paths to the output files
-        output_file_path1 = os.path.join(output_directory, f"{file_name}_response1.txt")
-        output_file_path2 = os.path.join(output_directory, f"{file_name}_response2.txt")
+        # Combine the two responses
+        combined_response = f"Explaination:\n{response1}\n\nExamples:\n{response2}"
 
-        # Write the responses to the output files
-        write_text_into_file(output_file_path1, response1)
-        write_text_into_file(output_file_path2, response2)
+        # Path to the output file
+        output_file_path = os.path.join(output_directory, f"{file_name}.txt")
 
-        # Print the responses (optional)
-        print(f"Formatted Text for {file_name} Response 1:\n", response1)
-        print(f"Formatted Text for {file_name} Response 2:\n", response2)
+        # Write the combined responses to the output file
+        with tqdm(
+            desc=f"Writing {file_name}_responses.txt",
+            total=len(combined_response),
+            unit="B",
+            unit_scale=True,
+        ) as pbar:
+            write_text_into_file(output_file_path, combined_response)
+            pbar.update(len(combined_response))
