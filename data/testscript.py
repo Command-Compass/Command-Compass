@@ -48,7 +48,7 @@ for file_name in tqdm(input_files, desc="Processing files"):
         # Invoke LangChain model with the text twice for two different responses
         response1 = chain.invoke({"Prompt": "Explain in detail", "text": text})
         response2 = chain.invoke(
-            {"Prompt": "give examples for every argument", "text": text}
+            {"Prompt": "Give examples for every argument", "text": text}
         )
 
         # Paths to the output files
