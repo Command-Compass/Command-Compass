@@ -1,0 +1,23 @@
+name: Greet User on New Issue
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Greet User
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const issueCreator = issue.user.login;
+            const message = `Hello @${issueCreator}! Thanks for creating an issue. We'll look into it shortly.`;
+            github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: message
+            });
