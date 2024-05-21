@@ -1,85 +1,72 @@
 import os
-import time
-import openai
-from tqdm import tqdm
+import subprocess
 
-# Set your OpenAI API key
-openai.api_key = "your_openai_api_key_here"
+# Define the command to run before executing commands from files
+INITIAL_COMMAND = "ollama run phi3"
 
-# Directory containing the CLI help files
-input_dir = "cli_help_files"
-output_dir = "AI_formatted_cli_help_files"
-os.makedirs(output_dir, exist_ok=True)
-
-# OpenAI API limits
-RPM = 3  # Requests per minute
-RPD = 200  # Requests per day
-TPM = 40000  # Tokens per minute
-BATCH_QUEUE_LIMIT = 200000  # Total tokens in the queue
-
-# Initialize counters
-requests_count = 0
-tokens_count = 0
+# Define the folder containing command files
+COMMANDS_FOLDER = "test"
+# Define the folder to save command outputs
+OUTPUT_FOLDER = "test_output"
 
 
-def format_help_with_openai(command, help_text):
-    global requests_count, tokens_count
-
-    # Estimate the number of tokens in the input
-    input_tokens = len(help_text.split())
-    prompt_tokens = len(
-        f"Transform the following CLI help output into a tutorial-like document with examples for each option. Use a readable format:\n\n{help_text}\n\nFormatted:".split()
-    )
-    total_tokens = input_tokens + prompt_tokens + 2048  # Max tokens for the response
-
-    # Check if adding this request would exceed the limits
-    if requests_count >= RPD:
-        print(f"Daily request limit reached. Skipping {command}.")
-        return ""
-
-    if tokens_count + total_tokens > BATCH_QUEUE_LIMIT:
-        print(f"Batch queue limit reached. Skipping {command}.")
-        return ""
-
-    # Check if this request would exceed the RPM limit
-    if requests_count % RPM == 0 and requests_count != 0:
-        print(f"Rate limit reached. Waiting for a minute before processing {command}.")
-        time.sleep(60)  # Wait for a minute
-
+def run_command(command):
     try:
-        response = openai.Completion.create(
-            model="gpt-3.5-turbo",
-            prompt=f"Transform the following CLI help output into a tutorial-like document with examples for each option. Use a readable format:\n\n{help_text}\n\nFormatted:",
-            max_tokens=2048,
-            temperature=0.7,
-            n=1,
-            stop=None,
+        # Run the command and capture the output
+        result = subprocess.run(
+            command,
+            shell=True,
+            check=True,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
-        formatted_text = response.choices[0].text.strip()
-        requests_count += 1
-        tokens_count += total_tokens
-        return formatted_text
-    except Exception as e:
-        print(f"Error processing command {command}: {e}")
-        return ""
+        output = result.stdout
+        error = result.stderr
+    except subprocess.CalledProcessError as e:
+        output = e.stdout
+        error = e.stderr
+
+    return output, error
 
 
-def process_help_files():
-    for filename in tqdm(os.listdir(input_dir)):
-        if filename.endswith("_help.txt"):
-            command = filename.replace("_help.txt", "")
-            with open(os.path.join(input_dir, filename), "r") as file:
-                help_text = file.read()
+def main():
+    # Ensure the output folder exists
+    os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-            formatted_help = format_help_with_openai(command, help_text)
-            if formatted_help:
-                output_filename = f"{command}_formatted_help.txt"
-                with open(os.path.join(output_dir, output_filename), "w") as file:
-                    file.write(formatted_help)
+    # Execute the initial command
+    print("Executing initial command:", INITIAL_COMMAND)
+    initial_output, initial_error = run_command(INITIAL_COMMAND)
+    if initial_output:
+        print("Initial command output:\n", initial_output)
+    if initial_error:
+        print("Initial command error:\n", initial_error)
+
+    # Iterate over files in the commands folder
+    for filename in os.listdir(COMMANDS_FOLDER):
+        if filename.endswith(".txt"):
+            # Read commands from the file
+            file_path = os.path.join(COMMANDS_FOLDER, filename)
+            with open(file_path, "r") as file:
+                commands = file.readlines()
+
+            # Execute commands and save outputs to a new file
+            output_file = os.path.join(
+                OUTPUT_FOLDER, f"{os.path.splitext(filename)[0]}_output.txt"
+            )
+            with open(output_file, "w") as output:
+                for command in commands:
+                    command = command.strip()
+                    if command:
+                        output.write(f"Command: {command}\n")
+                        command_output, command_error = run_command(command)
+                        if command_output:
+                            output.write(f"Output:\n{command_output}\n")
+                        if command_error:
+                            output.write(f"Error:\n{command_error}\n")
+                        output.write("\n")
+            print(f"Output saved to {output_file}")
 
 
 if __name__ == "__main__":
-    process_help_files()
-    print(
-        f"Formatted CLI help files have been generated in the directory: {output_dir}"
-    )
+    main()
