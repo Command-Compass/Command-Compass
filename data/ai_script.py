@@ -27,8 +27,8 @@ prompt = ChatPromptTemplate.from_template('{Prompt} "{text}"')
 chain = prompt | llm | StrOutputParser()
 
 # Paths to the input and output directories
-input_directory = "test_input"
-output_directory = "test_output"
+input_directory = "cli_help_files"
+output_directory = "cli_help_files_output"
 
 # Ensure the output directory exists
 os.makedirs(output_directory, exist_ok=True)
